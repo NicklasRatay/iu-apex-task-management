@@ -1,0 +1,110 @@
+---
+- # ====== Build Option: Commented Out =========================
+  id: 7520020405622745
+  identification: 
+    name: Commented Out
+
+  status: 
+    status: Exclude
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  subscription: 
+    version-number: 42100313070896
+
+- # ====== Build Option: Feature: Access Control ===============
+  id: 7812867510623658
+  identification: 
+    name: 'Feature: Access Control'
+
+  status: 
+    status: Include
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  comments: 
+    comments: Incorporate role based user authentication within your application and manage username mappings to application roles.
+
+  subscription: 
+    version-number: 42100313076763
+
+- # ====== Build Option: Feature: Activity Reporting ===========
+  id: 7812994238623658
+  identification: 
+    name: 'Feature: Activity Reporting'
+
+  status: 
+    status: Include
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  comments: 
+    comments: Include numerous reports and charts on end user activity.
+
+  subscription: 
+    version-number: 42100313076778
+
+- # ====== Build Option: Feature: Feedback =====================
+  id: 7813025545623658
+  identification: 
+    name: 'Feature: Feedback'
+
+  status: 
+    status: Include
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  comments: 
+    comments: Provide a mechanism for end users to post general comments back to the application administrators and developers.
+
+  subscription: 
+    version-number: 42100313076778
+
+- # ====== Build Option: Feature: Configuration Options ========
+  id: 7813225274623658
+  identification: 
+    name: 'Feature: Configuration Options'
+
+  status: 
+    status: Include
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  comments: 
+    comments: Allow application administrators to enable or disable specific functionality, associated with an Oracle APEX build option, from within the application.
+
+  subscription: 
+    version-number: 42100313076753
+
+- # ====== Build Option: Feature: About Page ===================
+  id: 7813536444623658
+  identification: 
+    name: 'Feature: About Page'
+
+  status: 
+    status: Include
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  comments: 
+    comments: About this application page.
+
+  subscription: 
+    version-number: 42100313076778
+
+- # ====== Build Option: Feature: Theme Style Selection ========
+  id: 7813695721623658
+  identification: 
+    name: 'Feature: Theme Style Selection'
+
+  status: 
+    status: Include
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  comments: 
+    comments: 'Allow administrators to select a default color scheme (theme style) for the application. Administrators can also choose to allow end users to choose their own theme style. '
+
+  subscription: 
+    version-number: 42100313076779
+
