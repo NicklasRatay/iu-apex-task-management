@@ -3,30 +3,45 @@
 This is the source code of the Oracle Application Express (APEX) implementation for the task management case application for my bachelor's thesis "Low-Code vs. Traditional Development: A Task Management Application Case Study with Insights into AI-Assisted Coding" at the IU Internationale Hochschule.
 
 ## Development
-Unfortunately, there is no easy way to setup APEX for local development. So this was out of scope for this project. Instead, the development environment is set up on an Oracle Cloud Infrastructure (OCI) Autonomous Database (ADB) with APEX.
+Unfortunately, there is no easy way to setup APEX for local development. So this was out of scope for this project. Instead, two separate Free Tier Autonomous Databases (ADB) on Oracle Cloud Infrastructure (OCI) were used for development and production, repsectively. This way, schema migrations and application deployments could still be tested.
 
 ### Setup
 
 Requirements:
-- An `APEX Workspace`, preferably on OCI
 - `Git`
-- `Java 11` or higher
-- `SQLcl`
+- `SQLcl` (must be added to the PATH so the sql command is available for the batch scripts)
+- `Java 11` or higher for SQLcl to work
+- `APEX ADB` of workload type "Transaction Processing" on OCI
 
 Cloning this Repository:
 ```bash
 git clone https://github.com/NicklasRatay/iu-apex-task-management.git
 ```
 
+Oracle Cloud Wallet for every ADB instance must be downloaded from the OCI Console and placed in the [/wallets](./wallets) directory. These are required for the batch scripts to connect to the database.
+
 ### Exporting Development Environment
 
-The following script exports the APEX application and uses Liquibase to create the database schema. The output will be replace the [/src](./src) directory. You need to download the Oracle Wallet and put it into the [/wallets](./wallets) directory.
+The following script exports the APEX application and uses Liquibase to create the database schema.
 
 ```bash
-apexexport2git <workspace_schema>/<schema_password>@<a_tns_name_from_wallet> <wallet_name>
+apexexport <wallet_name> <workspace_schema>/<schema_password>@<a_tns_name_from_wallet>
 ```
 
 Example:
 ```bash
-apexexport2git WKSP_TEST/secret-password@adbdev_tp adbdev.zip
+apexexport adbdev.zip WKSP_TEST/secret-password@adbdev_tp
+```
+
+### Deploying to Another Environment
+
+The following script installs the APEX application and uses Liquibase to update the database schema. This requires the target environment to be set up the same way as the development environment. The APEX workspace must have the same ID and name. The underlying database schema must have the same name, which should be the case if the APEX workspace was created with the same name.
+
+```bash
+apexdeploy <wallet_name> <workspace_schema>/<schema_password>@<a_tns_name_from_wallet>
+```
+
+Example:
+```bash
+apexdeploy adbprod.zip WKSP_TEST/secret-password@adbprod_tp
 ```
