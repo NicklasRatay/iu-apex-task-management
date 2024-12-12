@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+-->
+<databaseChangeLog 
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <include file="sequence/dbtools$execution_history_seq_sequence.xml"/> 
+  <include file="table/tbl_project_table.xml"/> 
+  <include file="table/tbl_role_table.xml"/> 
+  <include file="table/tbl_task_table.xml"/> 
+  <include file="table/tbl_task_priority_table.xml"/> 
+  <include file="table/tbl_task_status_table.xml"/> 
+  <include file="table/tbl_user_table.xml"/> 
+  <include file="table/tbl_user_role_table.xml"/> 
+  <include file="ref_constraint/fk_assigned_user_ref_constraint.xml"/> 
+  <include file="ref_constraint/fk_project_ref_constraint.xml"/> 
+  <include file="ref_constraint/fk_role_ref_constraint.xml"/> 
+  <include file="ref_constraint/fk_task_priority_ref_constraint.xml"/> 
+  <include file="ref_constraint/fk_task_status_ref_constraint.xml"/> 
+  <include file="ref_constraint/fk_user_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_project_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_project_updated_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_role_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_role_updated_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_task_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_task_priority_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_task_priority_updated_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_task_status_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_task_status_updated_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_task_updated_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_user_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_user_role_created_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_user_role_updated_by_fk_ref_constraint.xml"/> 
+  <include file="ref_constraint/tbl_user_updated_by_fk_ref_constraint.xml"/> 
+  <include file="procedure/add_audit_columns_and_trigger_procedure.xml"/> 
+  <include file="trigger/tbl_project_audit_trg_trigger.xml"/> 
+  <include file="trigger/tbl_role_audit_trg_trigger.xml"/> 
+  <include file="trigger/tbl_task_audit_trg_trigger.xml"/> 
+  <include file="trigger/tbl_task_priority_audit_trg_trigger.xml"/> 
+  <include file="trigger/tbl_task_status_audit_trg_trigger.xml"/> 
+  <include file="trigger/tbl_user_audit_trg_trigger.xml"/> 
+  <include file="trigger/tbl_user_role_audit_trg_trigger.xml"/> 
+</databaseChangeLog> 

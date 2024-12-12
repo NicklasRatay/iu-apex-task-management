@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+ xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
+ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+ <changeSet id="6f3c89f080fe0f0a2089fdaf412c0208c5d06d37" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+  <n0:createOracleTrigger objectName="TBL_TASK_AUDIT_TRG" objectType="TRIGGER" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
+    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE TRIGGER "%USER_NAME%"."TBL_TASK_AUDIT_TRG" 
+        BEFORE INSERT OR UPDATE ON TBL_TASK
+        FOR EACH ROW
+        DECLARE
+            v_user_id NUMBER;
+        BEGIN
+            BEGIN
+                -- Fetch the user ID based on APP_USER
+                SELECT id
+                INTO v_user_id
+                FROM tbl_user
+                WHERE email = v('APP_USER')
+                FETCH FIRST ROW ONLY;
+            EXCEPTION
+                WHEN NO_DATA_FOUND THEN
+                    -- Handle cases where no user matches APP_USER
+                    v_user_id := NULL; -- Or set to a default value if required
+            END;
+
+            -- Set created_at and created_by on INSERT
+            IF INSERTING THEN
+                :NEW.created_at := CURRENT_TIMESTAMP;
+                :NEW.created_by := v_user_id;
+            END IF;
+
+            -- Always set updated_at and updated_by
+            :NEW.updated_at := CURRENT_TIMESTAMP;
+            :NEW.updated_by := v_user_id;
+        END;
+/
+]]></n0:source>
+      </n0:createOracleTrigger>
+ </changeSet>
+</databaseChangeLog>

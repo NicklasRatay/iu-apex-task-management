@@ -1,0 +1,89 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Nicklas Ratay (generated)" id="1734010047928-1">
+        <insert tableName="TBL_ROLE">
+            <column name="ID" valueNumeric="2"/>
+            <column name="NAME" value="Project Manager"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:26:35.489709"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:26:35.489712"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_ROLE">
+            <column name="ID" valueNumeric="3"/>
+            <column name="NAME" value="Team Member"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:26:40.194265"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:26:40.194267"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_ROLE">
+            <column name="ID" valueNumeric="1"/>
+            <column name="NAME" value="Administrator"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:26:29.909386"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:26:29.909389"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nicklas Ratay (generated)" id="1734010047928-2">
+        <insert tableName="TBL_TASK_PRIORITY">
+            <column name="ID" valueNumeric="1"/>
+            <column name="NAME" value="Low"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:38.820543"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:25:38.820546"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_TASK_PRIORITY">
+            <column name="ID" valueNumeric="3"/>
+            <column name="NAME" value="High"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:45.277453"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:25:45.277456"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_TASK_PRIORITY">
+            <column name="ID" valueNumeric="4"/>
+            <column name="NAME" value="Critical"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:48.181708"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:25:48.18171"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_TASK_PRIORITY">
+            <column name="ID" valueNumeric="2"/>
+            <column name="NAME" value="Medium"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:42.002376"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:25:42.002379"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nicklas Ratay (generated)" id="1734010047928-3">
+        <insert tableName="TBL_TASK_STATUS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="NAME" value="To Do"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:19.01346"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:26:10.413546"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_TASK_STATUS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="NAME" value="In Progress"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:25.474041"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:26:13.021401"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+        <insert tableName="TBL_TASK_STATUS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="NAME" value="Done"/>
+            <column name="CREATED_AT" valueDate="2024-12-12T13:25:28.782324"/>
+            <column name="CREATED_BY"/>
+            <column name="UPDATED_AT" valueDate="2024-12-12T13:26:15.177475"/>
+            <column name="UPDATED_BY"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
