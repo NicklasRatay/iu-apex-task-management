@@ -22,6 +22,7 @@ echo set ddl segment_attributes off
 echo set ddl tablespace off
 echo set ddl emit_schema off
 echo lb update -changelog-file controller.xml
+echo lb update -changelog-file master_data.xml
 echo @../install.sql
 ) | sql /nolog
 popd

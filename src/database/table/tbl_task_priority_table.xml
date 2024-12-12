@@ -5,7 +5,7 @@
  xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
- <changeSet id="02e86bd5bfcbbecf25a7406d06f5ba2be15b543e" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+ <changeSet id="b875642f97e07df4ea1eacb0ed408309691d03f3" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
   <n0:createSxmlObject objectName="TBL_TASK_PRIORITY" objectType="TABLE" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
     <n0:source><![CDATA[
   <TABLE xmlns="http://xmlns.oracle.com/ku" version="1.0">
@@ -48,7 +48,6 @@
          <COL_LIST_ITEM>
             <NAME>CREATED_BY</NAME>
             <DATATYPE>NUMBER</DATATYPE>
-            <NOT_NULL></NOT_NULL>
             <ANNOTATION_LIST></ANNOTATION_LIST>
          </COL_LIST_ITEM>
          <COL_LIST_ITEM>
@@ -62,7 +61,6 @@
          <COL_LIST_ITEM>
             <NAME>UPDATED_BY</NAME>
             <DATATYPE>NUMBER</DATATYPE>
-            <NOT_NULL></NOT_NULL>
             <ANNOTATION_LIST></ANNOTATION_LIST>
          </COL_LIST_ITEM>
       </COL_LIST>

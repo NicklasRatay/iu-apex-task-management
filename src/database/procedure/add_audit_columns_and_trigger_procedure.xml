@@ -5,62 +5,106 @@
  xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
- <changeSet id="8a550a5178a6de2d62767b1f5bcd54432092481c" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+ <changeSet id="d89bc9ec005ba7c7b7157c370ce419a76d1d5549" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
   <n0:createOracleProcedure objectName="ADD_AUDIT_COLUMNS_AND_TRIGGER" objectType="PROCEDURE" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
-    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PROCEDURE "%USER_NAME%"."ADD_AUDIT_COLUMNS_AND_TRIGGER" ( 
-    p_table_name    IN VARCHAR2, 
-    p_user_table    IN VARCHAR2 := 'tbl_user' 
-) AS 
-BEGIN 
-    -- Add Audit Columns 
-    EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD ( 
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL 
-    )'; 
- 
-    EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD ( 
-        created_by NUMBER NOT NULL 
-    )'; 
- 
-    EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD ( 
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL 
-    )'; 
- 
-    EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD ( 
-        updated_by NUMBER NOT NULL 
-    )'; 
- 
-    -- Add Foreign Key Constraints 
-    EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD CONSTRAINT ' || 
-                       p_table_name || '_created_by_fk FOREIGN KEY (created_by) REFERENCES ' || 
-                       p_user_table || ' (id)'; 
- 
-    EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD CONSTRAINT ' || 
-                       p_table_name || '_updated_by_fk FOREIGN KEY (updated_by) REFERENCES ' || 
-                       p_user_table || ' (id)'; 
- 
-    -- Create Trigger for Automatically Updating `updated_at` and `updated_by` 
-    EXECUTE IMMEDIATE ' 
-        CREATE OR REPLACE TRIGGER ' || p_table_name || '_audit_trg 
-        BEFORE INSERT OR UPDATE ON ' || p_table_name || ' 
-        FOR EACH ROW 
-        DECLARE 
-            v_user_id NUMBER; 
-        BEGIN 
-            -- Fetch the user ID based on APP_USER 
-            SELECT id INTO v_user_id FROM tbl_user WHERE email = v(''APP_USER'') FETCH FIRST ROW ONLY; 
- 
-            -- Set created_at and created_by on INSERT 
-            IF INSERTING THEN 
-                :NEW.created_at := CURRENT_TIMESTAMP; 
-                :NEW.created_by := v_user_id; 
-            END IF; 
- 
-            -- Always set updated_at and updated_by 
-            :NEW.updated_at := CURRENT_TIMESTAMP; 
-            :NEW.updated_by := v_user_id; 
-        END;'; 
- 
-END; 
+    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PROCEDURE "%USER_NAME%"."ADD_AUDIT_COLUMNS_AND_TRIGGER" (
+    p_table_name    IN VARCHAR2,
+    p_user_table    IN VARCHAR2 := 'tbl_user'
+) AS
+    v_column_exists NUMBER;
+BEGIN
+    -- Add `created_at` column and constraint if not exist
+    SELECT COUNT(*)
+    INTO v_column_exists
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME = UPPER(p_table_name)
+      AND COLUMN_NAME = 'CREATED_AT';
+
+    IF v_column_exists = 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD (
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        )';
+
+        EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD CONSTRAINT ' ||
+                           p_table_name || '_created_by_fk FOREIGN KEY (created_by) REFERENCES ' ||
+                           p_user_table || ' (id)';
+    END IF;
+
+    -- Add `created_by` column if not exist
+    SELECT COUNT(*)
+    INTO v_column_exists
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME = UPPER(p_table_name)
+      AND COLUMN_NAME = 'CREATED_BY';
+
+    IF v_column_exists = 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD (
+            created_by NUMBER
+        )';
+    END IF;
+
+    -- Add `updated_at` column and constraint if not exist
+    SELECT COUNT(*)
+    INTO v_column_exists
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME = UPPER(p_table_name)
+      AND COLUMN_NAME = 'UPDATED_AT';
+
+    IF v_column_exists = 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD (
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        )';
+
+        EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD CONSTRAINT ' ||
+                           p_table_name || '_updated_by_fk FOREIGN KEY (updated_by) REFERENCES ' ||
+                           p_user_table || ' (id)';
+    END IF;
+
+    -- Add `updated_by` column if not exist
+    SELECT COUNT(*)
+    INTO v_column_exists
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME = UPPER(p_table_name)
+      AND COLUMN_NAME = 'UPDATED_BY';
+
+    IF v_column_exists = 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE ' || p_table_name || ' ADD (
+            updated_by NUMBER
+        )';
+    END IF;
+
+    -- Create Trigger for Automatically Updating `updated_at` and `updated_by`
+    EXECUTE IMMEDIATE '
+        CREATE OR REPLACE TRIGGER ' || p_table_name || '_audit_trg
+        BEFORE INSERT OR UPDATE ON ' || p_table_name || '
+        FOR EACH ROW
+        DECLARE
+            v_user_id NUMBER;
+        BEGIN
+            BEGIN
+                -- Fetch the user ID based on APP_USER
+                SELECT id
+                INTO v_user_id
+                FROM ' || p_user_table || '
+                WHERE email = v(''APP_USER'')
+                FETCH FIRST ROW ONLY;
+            EXCEPTION
+                WHEN NO_DATA_FOUND THEN
+                    -- Handle cases where no user matches APP_USER
+                    v_user_id := NULL; -- Or set to a default value if required
+            END;
+
+            -- Set created_at and created_by on INSERT
+            IF INSERTING THEN
+                :NEW.created_at := CURRENT_TIMESTAMP;
+                :NEW.created_by := v_user_id;
+            END IF;
+
+            -- Always set updated_at and updated_by
+            :NEW.updated_at := CURRENT_TIMESTAMP;
+            :NEW.updated_by := v_user_id;
+        END;';
+END;
 /]]></n0:source>
       </n0:createOracleProcedure>
  </changeSet>
