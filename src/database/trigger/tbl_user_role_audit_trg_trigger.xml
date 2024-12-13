@@ -5,36 +5,21 @@
  xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
- <changeSet id="fdcc702705e8b47c9d827231bfc907097f27f57e" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+ <changeSet id="1df0d02b090bf2c28c87b8f146f2cd4ea4d6c0f2" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
   <n0:createOracleTrigger objectName="TBL_USER_ROLE_AUDIT_TRG" objectType="TRIGGER" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
     <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE TRIGGER "%USER_NAME%"."TBL_USER_ROLE_AUDIT_TRG" 
         BEFORE INSERT OR UPDATE ON TBL_USER_ROLE
         FOR EACH ROW
-        DECLARE
-            v_user_id NUMBER;
         BEGIN
-            BEGIN
-                -- Fetch the user ID based on APP_USER
-                SELECT id
-                INTO v_user_id
-                FROM tbl_user
-                WHERE email = v('APP_USER')
-                FETCH FIRST ROW ONLY;
-            EXCEPTION
-                WHEN NO_DATA_FOUND THEN
-                    -- Handle cases where no user matches APP_USER
-                    v_user_id := NULL; -- Or set to a default value if required
-            END;
-
             -- Set created_at and created_by on INSERT
             IF INSERTING THEN
-                :NEW.created_at := CURRENT_TIMESTAMP;
-                :NEW.created_by := v_user_id;
+                :NEW.created_at := SYSDATE;
+                :NEW.created_by := v('APP_USER');
             END IF;
 
             -- Always set updated_at and updated_by
-            :NEW.updated_at := CURRENT_TIMESTAMP;
-            :NEW.updated_by := v_user_id;
+            :NEW.updated_at := SYSDATE;
+            :NEW.updated_by := v('APP_USER');
         END;
 /
 ]]></n0:source>

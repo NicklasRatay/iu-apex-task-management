@@ -5,16 +5,16 @@
     name: Navigation Menu
 
   subscription: 
-    version-number: 42100313092586
+    version-number: 42100450410993
 
   source: 
     type: Static Values
 
   entries: 
-  - # ====== Entry: Home =========================================
+  - # ====== Entry: Dashboard ====================================
     id: 7824294659623716
     label: 
-      label: Home
+      label: Dashboard
 
     icon: 
       image/icon-css-classes: fa-home
@@ -62,7 +62,7 @@
       translatable: false
 
     security: 
-      authorization-scheme: Administration Rights # 7815560117623667
+      authorization-scheme: Administrator Rights # 7815560117623667
 
 - # ====== List: Navigation Bar ================================
   id: 7810391671623617

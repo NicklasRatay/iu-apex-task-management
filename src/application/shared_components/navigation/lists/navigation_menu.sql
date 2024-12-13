@@ -15,12 +15,12 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(7521124400622754)
 ,p_name=>'Navigation Menu'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>42100313092586
+,p_version_scn=>42100450410993
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(7824294659623716)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Home'
+,p_list_item_link_text=>'Dashboard'
 ,p_list_item_link_target=>'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:::'
 ,p_list_item_icon=>'fa-home'
 ,p_list_item_current_type=>'TARGET_PAGE'

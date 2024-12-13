@@ -345,7 +345,7 @@ processes:
     procedure-or-function: LOGIN
 
   execution: 
-    sequence: 20
+    sequence: 30
     point: Processing
     run-process: Once Per Page Visit (default)
 
@@ -491,7 +491,7 @@ processes:
     type: Clear all Items on the Current Page
 
   execution: 
-    sequence: 30
+    sequence: 50
     point: Processing
     run-process: Once Per Page Visit (default)
 

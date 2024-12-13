@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+ xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
+ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+ <changeSet id="d349146eaa7e712e8e619a5f5116f79817eab2e4" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+  <n0:createOraclePackageBody objectName="USER_MANAGEMENT_PKG_TEST" objectType="PACKAGE_BODY" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
+    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PACKAGE BODY "%USER_NAME%"."USER_MANAGEMENT_PKG_TEST" AS
+
+    -- Test for get_password_hash function
+    PROCEDURE test_get_password_hash IS
+        v_hash VARCHAR2(4000);
+    BEGIN
+        -- Call get_password_hash
+        v_hash := user_management_pkg.get_password_hash('test_password');
+
+        -- Expect the hash to be not null
+        ut.expect(v_hash).to_be_not_null;
+
+        -- Expect the hash to contain the salt (length >= C_SALT_LENGTH)
+        ut.expect(LENGTH(v_hash)).to_be_greater_or_equal(user_management_pkg.C_SALT_LENGTH + 64); -- 64 for SHA-256 output
+    EXCEPTION
+        WHEN OTHERS THEN
+            ut.fail('Error in get_password_hash: ' || SQLERRM);
+    END;
+
+    -- Test for create_user procedure
+    PROCEDURE test_create_user IS
+        v_user_count NUMBER;
+        v_first_name VARCHAR2(100);
+        v_last_name  VARCHAR2(100);
+        v_error_msg  VARCHAR2(4000);
+    BEGIN
+        -- Ensure the test environment is clean
+        DELETE FROM tbl_user WHERE email = 'test.user@example.com';
+    
+        -- Call create_user
+        user_management_pkg.create_user(
+            p_username    => 'test.user@example.com',
+            p_password => 'password123'
+        );
+    
+        -- Verify the user was created and validate first/last name
+        SELECT COUNT(*), first_name, last_name
+        INTO v_user_count, v_first_name, v_last_name
+        FROM tbl_user
+        WHERE email = 'test.user@example.com'
+        GROUP BY first_name, last_name;
+    
+        -- Validate the user count
+        ut.expect(v_user_count).to_equal(1);
+    
+        -- Validate the extracted first name
+        ut.expect(v_first_name).to_equal('Test');
+    
+        -- Validate the extracted last name
+        ut.expect(v_last_name).to_equal('User');
+        
+        -- Test duplicate email error
+        BEGIN
+            user_management_pkg.create_user(
+                p_username    => 'test.user@example.com', -- Duplicate email
+                p_password => 'anotherpassword'
+            );
+        EXCEPTION
+            WHEN OTHERS THEN
+                v_error_msg := SQLERRM;
+        END;
+    
+        -- Validate the duplicate email error message
+        ut.expect(v_error_msg).to_match('ORA-20001: Email already exists.');
+    
+    EXCEPTION
+        WHEN OTHERS THEN
+            ut.fail('Error in create_user: ' || SQLERRM);
+    END;
+
+    -- Test for change_password procedure
+    PROCEDURE test_change_password IS
+    BEGIN
+        -- Ensure the user exists
+        user_management_pkg.create_user(
+            p_username    => 'test.user@example.com',
+            p_password => 'oldpassword'
+        );
+
+        -- Call change_password
+        user_management_pkg.change_password(
+            p_username        => 'test.user@example.com',
+            p_new_password => 'newpassword'
+        );
+
+        -- Verify the password was updated
+        DECLARE
+            v_authenticated BOOLEAN;
+        BEGIN
+            v_authenticated := user_management_pkg.authenticate(
+                p_username    => 'test.user@example.com',
+                p_password => 'newpassword'
+            );
+            ut.expect(v_authenticated).to_equal(TRUE);
+        END;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ut.fail('Error in change_password: ' || SQLERRM);
+    END;
+
+    -- Test for authenticate function
+    PROCEDURE test_authenticate IS
+        v_authenticated BOOLEAN;
+    BEGIN
+        -- Ensure the user exists
+        user_management_pkg.create_user(
+            p_username    => 'test.auth@example.com',
+            p_password => 'authpassword'
+        );
+
+        -- Test successful authentication
+        v_authenticated := user_management_pkg.authenticate(
+            p_username    => 'test.auth@example.com',
+            p_password => 'authpassword'
+        );
+        ut.expect(v_authenticated).to_equal(TRUE);
+
+        -- Test unsuccessful authentication (wrong password)
+        v_authenticated := user_management_pkg.authenticate(
+            p_username    => 'test.auth@example.com',
+            p_password => 'wrongpassword'
+        );
+        ut.expect(v_authenticated).to_equal(FALSE);
+
+        -- Test unsuccessful authentication (non-existent email)
+        v_authenticated := user_management_pkg.authenticate(
+            p_username    => 'nonexistent@example.com',
+            p_password => 'authpassword'
+        );
+        ut.expect(v_authenticated).to_equal(FALSE);
+    EXCEPTION
+        WHEN OTHERS THEN
+            ut.fail('Error in authenticate: ' || SQLERRM);
+    END;
+    
+    -- Test for authorization function
+    PROCEDURE test_has_role IS
+    BEGIN
+        -- Create users using the create_user procedure
+        user_management_pkg.create_user('test.user@example.com', 'password123');
+
+        -- Assign roles
+        INSERT INTO tbl_user_role (user_id, role_id)
+        SELECT id, 1 FROM tbl_user WHERE email = 'test.user@example.com'; -- Assign Admin role to test user
+        
+        -- Test case for a user with the specified role
+        ut.expect(
+            user_management_pkg.has_role('test.user@example.com', 1)
+        ).to_be_true;
+        
+        -- Test case for a user without the specified role
+        ut.expect(
+            user_management_pkg.has_role('test.user@example.com', 2)
+        ).to_be_false;
+        
+        -- Test case for a non-existent user
+        ut.expect(
+            user_management_pkg.has_role('nonexistent.user@example.com', 1)
+        ).to_be_false;
+    END test_has_role;
+    
+    -- Test for authorization function
+    PROCEDURE test_is_active IS
+    BEGIN
+        -- Create users using the create_user procedure
+        user_management_pkg.create_user('active.user@example.com', 'password123');
+        user_management_pkg.create_user('inactive.user@example.com', 'password123');
+
+        -- Deactivate a user
+        UPDATE tbl_user u
+        SET u.is_active = 0
+        WHERE u.email = 'inactive.user@example.com';
+        
+        -- Test case for active user
+        ut.expect(
+            user_management_pkg.is_active('active.user@example.com')
+        ).to_be_true;
+        
+        -- Test case for inactive user
+        ut.expect(
+            user_management_pkg.is_active('inactive.user@example.com')
+        ).to_be_false;
+        
+        -- Test case for non-existent user
+        ut.expect(
+            user_management_pkg.is_active('nonexistent.user@example.com')
+        ).to_be_false;
+    END test_is_active;
+
+END user_management_pkg_test;
+/]]></n0:source>
+      </n0:createOraclePackageBody>
+ </changeSet>
+</databaseChangeLog>

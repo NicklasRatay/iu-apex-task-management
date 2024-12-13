@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+ xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
+ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+ <changeSet id="720689c52390799a800a44df846e8170dd094f7a" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+  <n0:createOraclePackageSpec objectName="USER_MANAGEMENT_PKG" objectType="PACKAGE_SPEC" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
+    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PACKAGE "%USER_NAME%"."USER_MANAGEMENT_PKG" AS 
+
+    C_SALT_LENGTH CONSTANT PLS_INTEGER := 16;
+
+    FUNCTION get_password_hash(
+        p_password IN VARCHAR2
+    ) RETURN VARCHAR2;
+
+    PROCEDURE create_user(
+        p_username            IN VARCHAR2,
+        p_password         IN VARCHAR2
+    );
+
+    PROCEDURE change_password(
+        p_username            IN VARCHAR2,
+        p_new_password     IN VARCHAR2
+    );
+
+    FUNCTION authenticate(
+        p_username            IN VARCHAR2,
+        p_password         IN VARCHAR2
+    ) RETURN BOOLEAN;
+    
+    FUNCTION has_role (
+        p_username IN VARCHAR2,
+        p_role_id IN NUMBER
+    ) RETURN BOOLEAN;
+    
+    FUNCTION is_active (
+        p_username IN VARCHAR2
+    ) RETURN BOOLEAN;
+
+END user_management_pkg;
+/]]></n0:source>
+      </n0:createOraclePackageSpec>
+ </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+ xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
+ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+ <changeSet id="131388957fd5d2ddb22735b9524b0e0b7de5915a" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+  <n0:createOraclePackageSpec objectName="USER_MANAGEMENT_PKG_TEST" objectType="PACKAGE_SPEC" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
+    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PACKAGE "%USER_NAME%"."USER_MANAGEMENT_PKG_TEST" IS
+    -- %suite
+
+    -- %test
+    PROCEDURE test_get_password_hash;
+
+    -- %test
+    PROCEDURE test_create_user;
+
+    -- %test
+    PROCEDURE test_change_password;
+
+    -- %test
+    PROCEDURE test_authenticate;
+    
+    -- %test
+    PROCEDURE test_has_role;
+    
+    -- %test
+    PROCEDURE test_is_active;
+
+END user_management_pkg_test;
+/]]></n0:source>
+      </n0:createOraclePackageSpec>
+ </changeSet>
+</databaseChangeLog>

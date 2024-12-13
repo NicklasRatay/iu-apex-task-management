@@ -36,7 +36,7 @@ css:
     span.hour.is-over1k { background-color: var(--ut-palette-primary); color:  var(--ut-palette-primary-contrast); }
 
 security: 
-  authorization-scheme: Administration Rights # 7815560117623667
+  authorization-scheme: Administrator Rights # 7815560117623667
   authentication: Page Requires Authentication
   deep-linking: Application Default
   page-access-protection: Arguments Must Have Checksum

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+ xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
+ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+ <changeSet id="22a950e14b877005730c1942aeb79bd384caf217" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+  <n0:createOraclePackageBody objectName="USER_MANAGEMENT_PKG" objectType="PACKAGE_BODY" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
+    <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PACKAGE BODY "%USER_NAME%"."USER_MANAGEMENT_PKG" AS
+
+    -- Function to generate a salted hash for a given password
+    FUNCTION get_password_hash(
+        p_password IN VARCHAR2
+    ) RETURN VARCHAR2 IS
+        v_salt    VARCHAR2(C_SALT_LENGTH);
+        v_hash    VARCHAR2(4000);
+    BEGIN
+        -- Generate a random salt
+        v_salt := DBMS_RANDOM.STRING('x', C_SALT_LENGTH);
+
+        -- Use STANDARD_HASH in a SQL context to generate the hash
+        SELECT v_salt || STANDARD_HASH(v_salt || p_password, 'SHA256')
+        INTO v_hash
+        FROM DUAL;
+
+        RETURN v_hash;
+    END get_password_hash;
+
+    -- Procedure to create a new user
+    PROCEDURE create_user(
+        p_username    IN VARCHAR2,
+        p_password IN VARCHAR2
+    ) IS
+        v_password_hash VARCHAR2(4000);
+        v_first_name    VARCHAR2(100);
+        v_last_name     VARCHAR2(100);
+    BEGIN
+        -- Extract first name and last name from the email
+        v_first_name := INITCAP(SUBSTR(p_username, 1, INSTR(p_username, '.') - 1));
+        v_last_name := INITCAP(SUBSTR(p_username, INSTR(p_username, '.') + 1, INSTR(p_username, '@') - INSTR(p_username, '.') - 1));
+    
+        -- Generate the salted password hash
+        v_password_hash := get_password_hash(p_password);
+    
+        -- Insert the user into the table
+        INSERT INTO tbl_user (
+            email, encrypted_password, is_active, first_name, last_name
+        ) VALUES (
+            LOWER(p_username), v_password_hash, 1, v_first_name, NVL(v_last_name, 'Unknown')
+        );
+    
+    EXCEPTION
+        WHEN DUP_VAL_ON_INDEX THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Email already exists.');
+    END create_user;
+
+    -- Procedure to change a user's password
+    PROCEDURE change_password(
+        p_username        IN VARCHAR2,
+        p_new_password IN VARCHAR2
+    ) IS
+        v_password_hash VARCHAR2(4000);
+    BEGIN
+        -- Generate the salted password hash for the new password
+        v_password_hash := get_password_hash(p_new_password);
+
+        -- Update the user's password
+        UPDATE tbl_user
+        SET encrypted_password = v_password_hash
+        WHERE email = p_username;
+
+        -- Check if the email exists
+        IF SQL%ROWCOUNT = 0 THEN
+            RAISE_APPLICATION_ERROR(-20002, 'User not found.');
+        END IF;
+    END change_password;
+
+    -- Function to authenticate a user
+    FUNCTION authenticate(
+        p_username    IN VARCHAR2,
+        p_password IN VARCHAR2
+    ) RETURN BOOLEAN IS
+        v_salt            VARCHAR2(C_SALT_LENGTH);
+        v_stored_password VARCHAR2(4000);
+        v_calculated_hash VARCHAR2(4000);
+    BEGIN
+        -- Retrieve the stored password and extract the salt
+        SELECT encrypted_password, SUBSTR(encrypted_password, 1, C_SALT_LENGTH) AS salt
+        INTO v_stored_password, v_salt
+        FROM tbl_user
+        WHERE LOWER(email) = LOWER(p_username)
+          AND is_active = 1;
+
+        -- Calculate the hash using the stored salt
+        SELECT v_salt || STANDARD_HASH(v_salt || p_password, 'SHA256')
+        INTO v_calculated_hash
+        FROM DUAL;
+
+        -- Compare the calculated hash with the stored hash
+        RETURN v_calculated_hash = v_stored_password;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            -- Return FALSE if the email does not exist or is inactive
+            RETURN FALSE;
+    END authenticate;
+    
+    -- Function to check if a user has a specific role assigned
+    FUNCTION has_role (
+        p_username IN VARCHAR2,
+        p_role_id IN NUMBER
+    ) RETURN BOOLEAN IS
+        l_count NUMBER;
+    BEGIN
+        SELECT COUNT(*)
+        INTO l_count
+        FROM tbl_user u
+        JOIN tbl_user_role ur ON u.id = ur.user_id
+        WHERE LOWER(u.email) = LOWER(p_username)
+          AND ur.role_id = p_role_id;
+    
+        RETURN l_count > 0;
+    END has_role;
+    
+    FUNCTION is_active (
+        p_username IN VARCHAR2
+    ) RETURN BOOLEAN IS
+        l_count NUMBER;
+    BEGIN
+        SELECT COUNT(*)
+        INTO l_count
+        FROM tbl_user
+        WHERE is_active = 1
+            AND LOWER(email) = LOWER(p_username);
+    
+        RETURN l_count > 0;
+    END is_active;
+
+END user_management_pkg;
+/]]></n0:source>
+      </n0:createOraclePackageBody>
+ </changeSet>
+</databaseChangeLog>

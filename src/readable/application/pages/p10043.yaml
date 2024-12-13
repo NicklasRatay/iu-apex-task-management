@@ -24,7 +24,7 @@ navigation:
   warn-on-unsaved-changes: true
 
 security: 
-  authorization-scheme: Administration Rights # 7815560117623667
+  authorization-scheme: Administrator Rights # 7815560117623667
   authentication: Page Requires Authentication
   deep-linking: Disabled
   page-access-protection: Arguments Must Have Checksum

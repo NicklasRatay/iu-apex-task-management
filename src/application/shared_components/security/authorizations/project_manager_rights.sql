@@ -1,7 +1,7 @@
-prompt --application/shared_components/security/authorizations/contribution_rights
+prompt --application/shared_components/security/authorizations/project_manager_rights
 begin
 --   Manifest
---     SECURITY SCHEME: Contribution Rights
+--     SECURITY SCHEME: Project Manager Rights
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
@@ -13,12 +13,11 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_shared.create_security_scheme(
  p_id=>wwv_flow_imp.id(7815750701623667)
-,p_name=>'Contribution Rights'
-,p_scheme_type=>'NATIVE_IS_IN_GROUP'
-,p_attribute_01=>'Administrator,Contributor'
-,p_attribute_02=>'A'
-,p_error_message=>'Insufficient privileges, user is not a Contributor'
-,p_version_scn=>42100313076797
+,p_name=>'Project Manager Rights'
+,p_scheme_type=>'NATIVE_FUNCTION_BODY'
+,p_attribute_01=>'RETURN user_management_pkg.has_role(:APP_USER, 2);'
+,p_error_message=>'Insufficient privileges, you are do not have the Project Manager role.'
+,p_version_scn=>42100448517423
 ,p_caching=>'BY_USER_BY_PAGE_VIEW'
 );
 wwv_flow_imp.component_end;

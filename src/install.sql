@@ -17,12 +17,10 @@ prompt --install
 @@application/shared_components/files/icons_app_icon_256_rounded_png.sql
 @@application/shared_components/files/icons_app_icon_512_png.sql
 @@application/plugin_settings.sql
-@@application/shared_components/security/authorizations/administration_rights.sql
-@@application/shared_components/security/authorizations/reader_rights.sql
-@@application/shared_components/security/authorizations/contribution_rights.sql
-@@application/shared_components/security/app_access_control/administrator.sql
-@@application/shared_components/security/app_access_control/contributor.sql
-@@application/shared_components/security/app_access_control/reader.sql
+@@application/shared_components/security/authorizations/administrator_rights.sql
+@@application/shared_components/security/authorizations/team_member_rights.sql
+@@application/shared_components/security/authorizations/project_manager_rights.sql
+@@application/shared_components/security/authorizations/active_user_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
 @@application/shared_components/logic/application_settings.sql
 @@application/shared_components/navigation/tabs/standard.sql
@@ -117,6 +115,7 @@ prompt --install
 @@application/shared_components/globalization/messages.sql
 @@application/shared_components/globalization/dyntranslations.sql
 @@application/shared_components/security/authentications/oracle_apex_accounts.sql
+@@application/shared_components/security/authentications/custom_authentication_via_tbl_user.sql
 @@application/shared_components/plugins/template_component/theme_42_avatar.sql
 @@application/shared_components/plugins/template_component/theme_42_badge.sql
 @@application/shared_components/plugins/template_component/theme_42_button.sql

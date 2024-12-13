@@ -30,10 +30,10 @@ advanced:
 
 authentication: 
   public-user: APEX_PUBLIC_USER
-  authentication-scheme: Oracle APEX Accounts # 7520332422622747
+  authentication-scheme: Custom Authentication via TBL_USER # 9113597265221345
 
 authorization: 
-  authorization-scheme: Reader Rights # 7815678821623667
+  authorization-scheme: MODEL.LOV.MUST_NOT_BE_PUBLIC_USER
   run-on-public-pages: false
   run-on-background-job: true
   source-for-role-or-group-schemes: Access Control User Role Assignments
@@ -114,7 +114,7 @@ javascript:
 attributes: 
   theme: Universal Theme # 42
   global-page: 0
-  enable-end-users-to-choose-theme-style: false
+  enable-end-users-to-choose-theme-style: true
   add-"built-with-apex"-to-footer: false
   auto-dismiss-success-messages: false
 
@@ -315,7 +315,7 @@ application-settings:
     on-upgrade-keep-value: true
 
   subscription: 
-    version-number: 42100313076826
+    version-number: 42100444680584
 
   configuration: 
     build-option: 'Feature: Access Control' # 7812867510623658
