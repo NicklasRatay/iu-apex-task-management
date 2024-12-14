@@ -25,12 +25,12 @@ Oracle Cloud Wallet for every ADB instance must be downloaded from the OCI Conso
 The following script exports the APEX application and uses Liquibase to create the database schema. Tables that contain master data that do not change often and are used as lookup tables must be included in [master_data_tables.txt](./master_data_tables.txt). This is required for Liquibase to also pull this master data, which is then inserted into the target schema if it does not already exist there.
 
 ```bash
-apexexport <wallet_name> <workspace_schema>/<schema_password>@<a_tns_name_from_wallet>
+apexexport <wallet_name> <workspace_schema>/<schema_password>@<a_tns_name_from_wallet> <with_master_data>
 ```
 
 Example:
 ```bash
-apexexport adbdev.zip WKSP_TEST/secret-password@adbdev_tp
+apexexport adbdev.zip WKSP_TEST/secret-password@adbdev_tp y
 ```
 
 ### Deploying to Another Environment

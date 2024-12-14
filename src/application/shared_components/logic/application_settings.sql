@@ -30,7 +30,7 @@ wwv_flow_imp_shared.create_app_setting(
 ,p_on_upgrade_keep_value=>true
 ,p_required_patch=>wwv_flow_imp.id(7812867510623658)
 ,p_comments=>'The default access level given to authenticated users who are not in the access control list'
-,p_version_scn=>42100313076826
+,p_version_scn=>42100444680584
 );
 wwv_flow_imp.component_end;
 end;

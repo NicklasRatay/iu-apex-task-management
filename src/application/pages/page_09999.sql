@@ -163,7 +163,7 @@ wwv_flow_imp_shared.create_invokeapi_comp_param(
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(7820129736623702)
-,p_process_sequence=>20
+,p_process_sequence=>30
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_INVOKE_API'
 ,p_process_name=>'Login'
@@ -211,7 +211,7 @@ wwv_flow_imp_shared.create_invokeapi_comp_param(
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(7823908854623714)
-,p_process_sequence=>30
+,p_process_sequence=>50
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_SESSION_STATE'
 ,p_process_name=>'Clear Page(s) Cache'

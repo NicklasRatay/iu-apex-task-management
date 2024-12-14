@@ -19,6 +19,23 @@ navigation:
   cursor-focus: Do not focus cursor
   warn-on-unsaved-changes: true
 
+css: 
+  inline: |
+    .card-container {
+        text-align: center;
+        padding: 24px 0px;
+    }
+    
+    .card-title {
+        font-size: 64px;
+        margin-bottom: 32px;
+        font-weight: 300;
+    }
+    
+    .card-subtitle {
+        font-size: 32px;
+    }
+
 security: 
   authentication: Page Requires Authentication
   deep-linking: Application Default
@@ -41,12 +58,27 @@ regions:
   id: 7825167575623722
   identification: 
     name: Tick-It
-    type: Static Content
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          'Projects' AS title,
+          COUNT(1) AS metric
+      FROM tbl_project
+      UNION ALL
+      SELECT 
+          'Tasks',
+          COUNT(1)
+      FROM tbl_task;
+      
 
   layout: 
     sequence: 10
-    parent-region: No Parent
-    slot: REGION_POSITION_01
+    parent-region: Right Container # 9828064690248026
+    slot: SUB_REGIONS
     start-new-layout: false
     start-new-row: true
     column: Automatic
@@ -54,7 +86,7 @@ regions:
     column-span: Automatic
 
   appearance: 
-    template: Hero
+    template: Cards Container
     template-options: 
     - '#DEFAULT#'
     render-components: Above Content
@@ -63,8 +95,89 @@ regions:
     use-landmark: true
     landmark-type: Template Default
 
-  image: 
-    file-url: '#APP_FILES#icons/app-icon-512.png'
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 9827999513248025
+    appearance: 
+      layout: Grid
+      grid-columns: 2 Columns
+
+    card: 
+      css-classes: 
+      - card-container
+      primary-key-column-1: TITLE
+
+    title: 
+      advanced-formatting: false
+      column: METRIC
+      css-classes: 
+      - card-title
+
+    subtitle: 
+      advanced-formatting: false
+      column: TITLE
+      css-classes: 
+      - card-subtitle
+
+    body: 
+      advanced-formatting: false
+
+    secondary-body: 
+      advanced-formatting: false
+
+    icon-and-badge: 
+      icon-source: No Icon
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+- # ====== Region: Right Container =============================
+  id: 9828064690248026
+  identification: 
+    name: Right Container
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - col-xxs-12
+    - col-xs-12
+    - col-sm-12
+    - col-md-6
+    - col-lg-6
+    - col-xl-6
+    - col-xxl-6
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
 
   advanced: 
     region-display-selector: false
@@ -77,4 +190,442 @@ regions:
     settings: 
       output-as: HTML
       expand-shortcuts: false
+
+- # ====== Region: Upcoming Tasks ==============================
+  id: 9828172036248027
+  identification: 
+    name: Upcoming Tasks
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          id,
+          name,
+          description,
+          CASE task_priority_id
+              WHEN 1 THEN 'fa fa-angle-down u-color-30'
+              WHEN 2 THEN 'fa fa-minus u-color-31'
+              WHEN 3 THEN 'fa fa-angle-up u-color-37'
+              WHEN 4 THEN 'fa fa-angle-double-up u-color-39'
+              ELSE 'fa fa-question-circle'
+          END AS priority_icon,
+          TO_CHAR(deadline, 'YYYY-MM-DD') AS deadline
+      FROM tbl_task
+      WHERE task_status_id <> 3
+      ORDER BY deadline ASC
+      FETCH FIRST 5 ROWS ONLY;
+      
+
+  layout: 
+    sequence: 20
+    parent-region: Right Container # 9828064690248026
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Content Block
+    template-options: 
+    - '#DEFAULT#'
+    - t-ContentBlock--h3
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 9828231688248028
+    appearance: 
+      layout: Horizontal (Row)
+
+    card: 
+      primary-key-column-1: ID
+
+    title: 
+      advanced-formatting: false
+      column: NAME
+
+    subtitle: 
+      advanced-formatting: false
+      column: DESCRIPTION
+
+    body: 
+      advanced-formatting: false
+
+    secondary-body: 
+      advanced-formatting: false
+
+    icon-and-badge: 
+      icon-source: Icon Class Column
+      icon-column: PRIORITY_ICON
+      icon-css-classes: TESTTESTTEST
+      icon-position: Start
+      badge-column: DEADLINE
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+- # ====== Region: Left Container ==============================
+  id: 9828374146248029
+  identification: 
+    name: Left Container
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - col-xxs-12
+    - col-xs-12
+    - col-sm-12
+    - col-md-6
+    - col-lg-6
+    - col-xl-6
+    - col-xxl-6
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: All Tasks per Status ========================
+  id: 9828468335248030
+  identification: 
+    name: All Tasks per Status
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 10
+    parent-region: Left Container # 9828374146248029
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 9828578784248031
+    chart: 
+      type: Donut
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    settings: 
+      pie-selection-effect: Highlight
+
+    value: 
+      pie-chart-other-threshold: 0
+      format: Decimal
+      decimal-places: 0
+      format-scaling: None
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: New =========================================
+      id: 9828613690248032
+      identification: 
+        name: New
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          SELECT 
+              ts.name AS status_name,
+              COUNT(t.id) AS task_count,
+              CASE ts.id
+                  WHEN 1 THEN '#FFB347' -- Light Orange
+                  WHEN 2 THEN '#87CEEB' -- Light Blue
+                  WHEN 3 THEN '#98FB98' -- Light Green
+                  ELSE '#D3D3D3' -- Light Gray for unknown status
+              END AS status_color
+          FROM 
+              tbl_task t
+          JOIN 
+              tbl_task_status ts
+              ON t.task_status_id = ts.id
+          GROUP BY 
+              ts.id,
+              ts.name
+          ORDER BY 
+              ts.id;
+          
+
+      column-mapping: 
+        label: STATUS_NAME
+        value: TASK_COUNT
+        custom-column: STATUS_NAME
+
+      appearance: 
+        color: '&STATUS_COLOR.'
+
+      label: 
+        show: true
+        position: Automatic
+        display-as: Label
+
+- # ====== Region: Pending Tasks per Priority ==================
+  id: 9828920394248035
+  identification: 
+    name: Pending Tasks per Priority
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 20
+    parent-region: Left Container # 9828374146248029
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 9829094411248036
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: New =========================================
+      id: 9829190337248037
+      identification: 
+        name: New
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          SELECT 
+              tp.name AS priority_name,
+              COUNT(t.id) AS task_count,
+              CASE tp.id
+                  WHEN 1 THEN '#D3D3D3' -- Gray
+                  WHEN 2 THEN '#87CEEB' -- Light Blue
+                  WHEN 3 THEN '#FFA500' -- Light Orange
+                  WHEN 4 THEN '#FF6347' -- Light Red
+                  ELSE '#9E9E9E' -- Default Gray for unknown priorities
+              END AS priority_color
+          FROM 
+              tbl_task t
+          JOIN 
+              tbl_task_priority tp
+              ON t.task_priority_id = tp.id
+          WHERE 
+              t.task_status_id <> 3 -- Exclude completed tasks
+          GROUP BY 
+              tp.name, tp.id
+          ORDER BY 
+              tp.id;
+          
+
+      column-mapping: 
+        label: PRIORITY_NAME
+        value: TASK_COUNT
+        custom-column: PRIORITY_COLOR
+
+      appearance: 
+        color: '&PRIORITY_COLOR.'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 9829293761248038
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 9829307475248039
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
 

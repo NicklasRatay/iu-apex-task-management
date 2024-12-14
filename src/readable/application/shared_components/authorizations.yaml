@@ -1,73 +1,78 @@
 ---
-- # ====== Authorization: Administration Rights ================
+- # ====== Authorization: Administrator Rights =================
   id: 7815560117623667
   identification: 
-    name: Administration Rights
+    name: Administrator Rights
 
   subscription: 
-    version-number: 42100313076797
-
-  authorization-scheme: 
-    type: Is In Role or Group
-
-  settings: 
-    type: Application Role
-    name(s): Administrator
-
-  server-cache: 
-    evaluation-point: Once per Page View
-
-  error: 
-    error-message: Insufficient privileges, user is not an Administrator
-
-- # ====== Authorization: Reader Rights ========================
-  id: 7815678821623667
-  identification: 
-    name: Reader Rights
-
-  subscription: 
-    version-number: 42100313076797
+    version-number: 42100448506074
 
   authorization-scheme: 
     type: PL/SQL Function Returning Boolean
 
   settings: 
-    pl/sql-function-body: |
-      if nvl(apex_app_setting.get_value(
-         p_name => 'ACCESS_CONTROL_SCOPE'),'x') = 'ALL_USERS' then
-          -- allow user not in the ACL to access the application
-          return true;
-      else
-          -- require user to have at least one role
-          return apex_acl.has_user_any_roles (
-              p_application_id => :APP_ID, 
-              p_user_name      => :APP_USER);
-      end if;
-
-  server-cache: 
-    evaluation-point: Once per Session
-
-  error: 
-    error-message: You are not authorized to view this application, either because you have not been granted access, or your account has been locked. Please contact the application administrator.
-
-- # ====== Authorization: Contribution Rights ==================
-  id: 7815750701623667
-  identification: 
-    name: Contribution Rights
-
-  subscription: 
-    version-number: 42100313076797
-
-  authorization-scheme: 
-    type: Is In Role or Group
-
-  settings: 
-    type: Application Role
-    name(s): Administrator,Contributor
+    pl/sql-function-body: 'RETURN user_management_pkg.has_role(:APP_USER, 1);'
 
   server-cache: 
     evaluation-point: Once per Page View
 
   error: 
-    error-message: Insufficient privileges, user is not a Contributor
+    error-message: Insufficient privileges, you are do not have the Administrator role.
+
+- # ====== Authorization: Team Member Rights ===================
+  id: 7815678821623667
+  identification: 
+    name: Team Member Rights
+
+  subscription: 
+    version-number: 42100448530602
+
+  authorization-scheme: 
+    type: PL/SQL Function Returning Boolean
+
+  settings: 
+    pl/sql-function-body: 'RETURN user_management_pkg.has_role(:APP_USER, 3);'
+
+  server-cache: 
+    evaluation-point: Once per Page View
+
+  error: 
+    error-message: Insufficient privileges, you are do not have the Team Member role.
+
+- # ====== Authorization: Project Manager Rights ===============
+  id: 7815750701623667
+  identification: 
+    name: Project Manager Rights
+
+  subscription: 
+    version-number: 42100448517423
+
+  authorization-scheme: 
+    type: PL/SQL Function Returning Boolean
+
+  settings: 
+    pl/sql-function-body: 'RETURN user_management_pkg.has_role(:APP_USER, 2);'
+
+  server-cache: 
+    evaluation-point: Once per Page View
+
+  error: 
+    error-message: Insufficient privileges, you are do not have the Project Manager role.
+
+- # ====== Authorization: Active User Rights ===================
+  id: 9130419444148881
+  identification: 
+    name: Active User Rights
+
+  subscription: 
+    version-number: 42100450174630
+
+  authorization-scheme: 
+    type: PL/SQL Function Returning Boolean
+
+  settings: 
+    pl/sql-function-body: 'RETURN user_management_pkg.is_active(:APP_USER);'
+
+  server-cache: 
+    evaluation-point: Once per Page View
 

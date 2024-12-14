@@ -15,22 +15,49 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(7521124400622754)
 ,p_name=>'Navigation Menu'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>42100313092586
+,p_version_scn=>42100528430782
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(7824294659623716)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Home'
+,p_list_item_link_text=>'Dashboard'
 ,p_list_item_link_target=>'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:::'
 ,p_list_item_icon=>'fa-home'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(10119012722897787)
+,p_list_item_display_sequence=>20
+,p_list_item_link_text=>'Your Tasks'
+,p_list_item_link_target=>'f?p=&APP_ID.:300:&APP_SESSION.::&DEBUG.:::'
+,p_list_item_icon=>'fa-tasks-alt'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'300'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(9898916582516695)
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'Your Projects'
+,p_list_item_link_target=>'f?p=&APP_ID.:200:&APP_SESSION.::&DEBUG.:::'
+,p_list_item_icon=>'fa-folder-o'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'200'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(9724698173878134)
+,p_list_item_display_sequence=>40
+,p_list_item_link_text=>'Users'
+,p_list_item_link_target=>'f?p=&APP_ID.:100:&APP_SESSION.::&DEBUG.:::'
+,p_list_item_icon=>'fa-users'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'100,101'
+);
+wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(8000631151624637)
 ,p_list_item_display_sequence=>10000
 ,p_list_item_link_text=>'Administration'
-,p_list_item_link_target=>'f?p=&APP_ID.:10000:&APP_SESSION.::&DEBUG.:::'
-,p_list_item_icon=>'fa-user-wrench'
+,p_list_item_link_target=>'f?p=&APP_ID.:10000:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-gear'
 ,p_security_scheme=>wwv_flow_imp.id(7815560117623667)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );

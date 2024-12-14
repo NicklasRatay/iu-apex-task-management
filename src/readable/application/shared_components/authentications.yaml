@@ -19,3 +19,25 @@
   real-application-security: 
     ras-mode: Disabled
 
+- # ====== Authentication: Custom Authentication via TBL_USER ==
+  id: 9113597265221345
+  identification: 
+    name: Custom Authentication via TBL_USER
+
+  subscription: 
+    version-number: 42100443185850
+
+  settings: 
+    type: Custom
+    authentication-function-name: user_management_pkg.authenticate
+    enable-legacy-authentication-attributes: false
+
+  session-not-valid: 
+    redirect-to: Login Page
+
+  login-processing: 
+    switch-in-session: false
+
+  real-application-security: 
+    ras-mode: Disabled
+

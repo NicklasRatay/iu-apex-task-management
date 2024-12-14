@@ -3,6 +3,7 @@
 :: Parameters:
 :: %1 = DB wallet zip file
 :: %2 = DB connection string
+:: %3 = Export master data? (Y/N)
 ::------------------------------
 
 @echo off
@@ -52,6 +53,11 @@ echo set ddl emit_schema off
 echo lb generate-schema -split
 echo lb data -output-file master_data.xml -include-objects %FINAL_INCLUDE_TABLES%
 ) | sql /nolog
+
+:: Replace generated master data file with the original one if the user chose not to export master data
+if /I not "%3"=="Y" (
+    xcopy "%TARGET_DIR%\database\master_data.xml" "%TEMP%\stage_f100\master_data.xml" /y
+)
 
 :: Copy APEX application export files in the ./fNNN subdirectory to the original working directory
 robocopy %TEMP%\stage_f100\f100 "%TARGET_DIR%" * /mir

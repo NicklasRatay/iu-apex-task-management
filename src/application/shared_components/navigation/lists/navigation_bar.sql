@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(7810391671623617)
 ,p_name=>'Navigation Bar'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>42100313092569
+,p_version_scn=>42100510668425
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(7996891239624628)
@@ -84,6 +84,24 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_link_target=>'#'
 ,p_list_item_icon=>'fa-user'
 ,p_list_text_02=>'has-username'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(9807221388136650)
+,p_list_item_display_sequence=>71
+,p_list_item_link_text=>'Change Name'
+,p_list_item_link_target=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:2:::'
+,p_list_item_icon=>'fa-user'
+,p_parent_list_item_id=>wwv_flow_imp.id(7999191522624633)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(9807764140142119)
+,p_list_item_display_sequence=>72
+,p_list_item_link_text=>'Change Password'
+,p_list_item_link_target=>'f?p=&APP_ID.:3:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-key'
+,p_parent_list_item_id=>wwv_flow_imp.id(7999191522624633)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp_shared.create_list_item(

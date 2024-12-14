@@ -5,7 +5,7 @@
  xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
- <changeSet id="d99cef07720dc647577ebd31dfc44b02f4908bf5" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+ <changeSet id="f8581b3f4d77a0df3493909915764eb91f1ebc3a" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
   <n0:createSxmlObject objectName="TBL_TASK_STATUS" objectType="TABLE" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
     <n0:source><![CDATA[
   <TABLE xmlns="http://xmlns.oracle.com/ku" version="1.0">
@@ -47,7 +47,9 @@
          </COL_LIST_ITEM>
          <COL_LIST_ITEM>
             <NAME>CREATED_BY</NAME>
-            <DATATYPE>NUMBER</DATATYPE>
+            <DATATYPE>VARCHAR2</DATATYPE>
+            <LENGTH>255</LENGTH>
+            <COLLATE_NAME>USING_NLS_COMP</COLLATE_NAME>
             <ANNOTATION_LIST></ANNOTATION_LIST>
          </COL_LIST_ITEM>
          <COL_LIST_ITEM>
@@ -60,7 +62,9 @@
          </COL_LIST_ITEM>
          <COL_LIST_ITEM>
             <NAME>UPDATED_BY</NAME>
-            <DATATYPE>NUMBER</DATATYPE>
+            <DATATYPE>VARCHAR2</DATATYPE>
+            <LENGTH>255</LENGTH>
+            <COLLATE_NAME>USING_NLS_COMP</COLLATE_NAME>
             <ANNOTATION_LIST></ANNOTATION_LIST>
          </COL_LIST_ITEM>
       </COL_LIST>
