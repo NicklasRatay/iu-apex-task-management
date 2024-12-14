@@ -89,6 +89,7 @@ regions:
     table-owner: Parsing Schema
     table-name: VW_PROJECT_WITH_TASK_SUMMARY
     include-rowid-column: false
+    where-clause: 'created_by = :APP_USER'
 
   layout: 
     sequence: 20
@@ -726,8 +727,8 @@ regions:
       lazy-loading: false
 
     appearance: 
-      select-first-row: true
-      fixed-row-height: true
+      select-first-row: false
+      fixed-row-height: false
 
     pagination: 
       type: Page
@@ -866,11 +867,15 @@ regions:
     id: 9917030619516779
     identification: 
       column-name: TASK_STATUS_ID
-      type: Select List
+      type: Display Only
 
     heading: 
       heading: Status
       alignment: start
+
+    settings: 
+      format: Plain Text
+      based-on: Display Value of List of Values
 
     layout: 
       sequence: 100
@@ -880,14 +885,10 @@ regions:
     accessibility: 
       value-identifies-row: false
 
-    validation: 
-      value-required: true
-
     list-of-values: 
       type: Shared Component
       list-of-values: LOV_TASK_STATUS # 9933190713551879
       display-extra-values: true
-      display-null-value: true
 
     source: 
       type: Database Column
@@ -897,7 +898,12 @@ regions:
       primary-key: false
 
     default: 
+      type: Static
+      static-value: 1
       duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
 
     column-filter: 
       enabled: true

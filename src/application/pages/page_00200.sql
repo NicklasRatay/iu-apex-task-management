@@ -40,6 +40,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>20
 ,p_query_type=>'TABLE'
 ,p_query_table=>'VW_PROJECT_WITH_TASK_SUMMARY'
+,p_query_where=>'created_by = :APP_USER'
 ,p_include_rowid_column=>false
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_prn_page_header=>'Your Projects'
@@ -512,17 +513,18 @@ wwv_flow_imp_page.create_region_column(
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'TASK_STATUS_ID'
 ,p_data_type=>'NUMBER'
+,p_session_state_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
-,p_item_type=>'NATIVE_SELECT_LIST'
+,p_item_type=>'NATIVE_DISPLAY_ONLY'
 ,p_heading=>'Status'
 ,p_heading_alignment=>'LEFT'
 ,p_display_sequence=>100
 ,p_value_alignment=>'LEFT'
-,p_is_required=>true
+,p_attribute_02=>'LOV'
+,p_attribute_05=>'PLAIN'
 ,p_lov_type=>'SHARED'
 ,p_lov_id=>wwv_flow_imp.id(9933190713551879)
 ,p_lov_display_extra=>true
-,p_lov_display_null=>true
 ,p_enable_filter=>true
 ,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
@@ -535,6 +537,8 @@ wwv_flow_imp_page.create_region_column(
 ,p_enable_hide=>true
 ,p_enable_pivot=>false
 ,p_is_primary_key=>false
+,p_default_type=>'STATIC'
+,p_default_expression=>'1'
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
 );
@@ -827,8 +831,8 @@ wwv_flow_imp_page.create_interactive_grid(
 ,p_submit_checked_rows=>false
 ,p_lazy_loading=>false
 ,p_requires_filter=>false
-,p_select_first_row=>true
-,p_fixed_row_height=>true
+,p_select_first_row=>false
+,p_fixed_row_height=>false
 ,p_pagination_type=>'SET'
 ,p_show_total_row_count=>true
 ,p_show_toolbar=>true

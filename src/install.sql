@@ -30,6 +30,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/email_username_format.sql
 @@application/shared_components/user_interface/lovs/feedback_rating.sql
 @@application/shared_components/user_interface/lovs/feedback_status.sql
+@@application/shared_components/user_interface/lovs/lov_project.sql
 @@application/shared_components/user_interface/lovs/lov_roles.sql
 @@application/shared_components/user_interface/lovs/lov_task_priority.sql
 @@application/shared_components/user_interface/lovs/lov_task_status.sql
@@ -135,8 +136,7 @@ prompt --install
 @@application/pages/page_00100.sql
 @@application/pages/page_00101.sql
 @@application/pages/page_00200.sql
-@@application/pages/page_00201.sql
-@@application/pages/page_00202.sql
+@@application/pages/page_00300.sql
 @@application/pages/page_09999.sql
 @@application/pages/page_10000.sql
 @@application/pages/page_10010.sql

@@ -371,3 +371,23 @@
     advanced: 
       searchable: false
 
+- # ====== List of Values: LOV_PROJECT =========================
+  id: 10141560415262067
+  identification: 
+    name: LOV_PROJECT
+
+  subscription: 
+    version-number: 42100527899911
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TBL_PROJECT
+
+  column-mapping: 
+    return: ID
+    display: NAME
+    default-sort: NAME
+    sort-direction: Ascending (Nulls Last)
+

@@ -5,7 +5,7 @@
     name: Navigation Menu
 
   subscription: 
-    version-number: 42100515630695
+    version-number: 42100528430782
 
   source: 
     type: Static Values
@@ -42,7 +42,7 @@
       label: Administration
 
     icon: 
-      image/icon-css-classes: fa-user-wrench
+      image/icon-css-classes: fa-gear
 
     layout: 
       sequence: 10000
@@ -52,7 +52,7 @@
 
     link: 
       target: 
-        url: 'f?p=&APP_ID.:10000:&APP_SESSION.::&DEBUG.:::'
+        url: 'f?p=&APP_ID.:10000:&SESSION.::&DEBUG.::::'
         page: 10000 # Administration
 
     click-counting: 
@@ -112,6 +112,33 @@
       target: 
         url: 'f?p=&APP_ID.:200:&APP_SESSION.::&DEBUG.:::'
         page: 200 # Your Projects
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Your Tasks ===================================
+    id: 10119012722897787
+    label: 
+      label: Your Tasks
+
+    icon: 
+      image/icon-css-classes: fa-tasks-alt
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 300
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:300:&APP_SESSION.::&DEBUG.:::'
+        page: 300 # Your Tasks
 
     click-counting: 
       count-clicks: false
