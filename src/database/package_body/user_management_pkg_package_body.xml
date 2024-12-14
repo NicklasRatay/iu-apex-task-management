@@ -5,7 +5,7 @@
  xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
- <changeSet id="22a950e14b877005730c1942aeb79bd384caf217" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+ <changeSet id="182afdc77eac34f4fb3fe1b8edb286c26d76c484" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
   <n0:createOraclePackageBody objectName="USER_MANAGEMENT_PKG" objectType="PACKAGE_BODY" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
     <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PACKAGE BODY "%USER_NAME%"."USER_MANAGEMENT_PKG" AS
 
@@ -28,17 +28,20 @@
     END get_password_hash;
 
     -- Procedure to create a new user
-    PROCEDURE create_user(
+    FUNCTION create_user(
         p_username    IN VARCHAR2,
         p_password IN VARCHAR2
-    ) IS
+    ) RETURN NUMBER IS
         v_password_hash VARCHAR2(4000);
-        v_first_name    VARCHAR2(100);
-        v_last_name     VARCHAR2(100);
+        v_full_name     VARCHAR2(255);
+        v_first_name    VARCHAR2(126);
+        v_last_name     VARCHAR2(126);
+        v_new_id        NUMBER;
     BEGIN
-        -- Extract first name and last name from the email
-        v_first_name := INITCAP(SUBSTR(p_username, 1, INSTR(p_username, '.') - 1));
-        v_last_name := INITCAP(SUBSTR(p_username, INSTR(p_username, '.') + 1, INSTR(p_username, '@') - INSTR(p_username, '.') - 1));
+        -- Extract the first and last name
+        v_full_name := INITCAP(SUBSTR(p_username, 1, INSTR(p_username, '@') - 1));
+        v_first_name := INITCAP(SUBSTR(v_full_name, 1, INSTR(v_full_name, '.') - 1));
+        v_last_name := INITCAP(SUBSTR(v_full_name, INSTR(v_full_name, '.') + 1));
     
         -- Generate the salted password hash
         v_password_hash := get_password_hash(p_password);
@@ -47,12 +50,25 @@
         INSERT INTO tbl_user (
             email, encrypted_password, is_active, first_name, last_name
         ) VALUES (
-            LOWER(p_username), v_password_hash, 1, v_first_name, NVL(v_last_name, 'Unknown')
-        );
-    
+            LOWER(p_username), v_password_hash, 1, NVL(v_first_name, 'Unknown'), NVL(v_last_name, 'Unknown')
+        ) RETURNING id INTO v_new_id;
+        
+        RETURN v_new_id;
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             RAISE_APPLICATION_ERROR(-20001, 'Email already exists.');
+    END create_user;
+    
+    PROCEDURE create_user(
+        p_username    IN VARCHAR2,
+        p_password IN VARCHAR2
+    ) IS
+        v_dummy NUMBER;
+    BEGIN
+        v_dummy := create_user(
+            p_username,
+            p_password
+        );
     END create_user;
 
     -- Procedure to change a user's password

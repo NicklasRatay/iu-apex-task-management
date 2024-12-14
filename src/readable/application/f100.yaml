@@ -191,11 +191,11 @@ component-settings:
     type: Item
 
   settings: 
-    attribute-1: Y
-    attribute-2: N
+    attribute-1: 1
+    attribute-2: 0
 
   subscription: 
-    version-number: 42100313070890
+    version-number: 42100502092757
 
 - # ====== Component Setting: NATIVE_ADFBC =====================
   id: 7517955540622739
@@ -213,12 +213,12 @@ component-settings:
     type: Item
 
   settings: 
-    attribute-1: Y
-    attribute-3: N
+    attribute-1: 1
+    attribute-3: 0
     attribute-5: SWITCH_CB
 
   subscription: 
-    version-number: 42100313070892
+    version-number: 42100502099346
 
 - # ====== Component Setting: NATIVE_IR ========================
   id: 7518578220622741

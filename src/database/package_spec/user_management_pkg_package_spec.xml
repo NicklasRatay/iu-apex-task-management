@@ -5,7 +5,7 @@
  xmlns:n0="http://www.oracle.com/xml/ns/dbchangelog-ext" 
  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
- <changeSet id="720689c52390799a800a44df846e8170dd094f7a" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
+ <changeSet id="9918bbba88d998ba8220ef7196649f097ac6bba2" author="(WKSP_IUWORKSPACE)-Generated" failOnError="true"    runOnChange="false"  runAlways="false"  runInTransaction="false"  >
   <n0:createOraclePackageSpec objectName="USER_MANAGEMENT_PKG" objectType="PACKAGE_SPEC" ownerName="WKSP_IUWORKSPACE"  replaceIfExists="false" >
     <n0:source><![CDATA[CREATE OR REPLACE EDITIONABLE PACKAGE "%USER_NAME%"."USER_MANAGEMENT_PKG" AS 
 
@@ -14,6 +14,11 @@
     FUNCTION get_password_hash(
         p_password IN VARCHAR2
     ) RETURN VARCHAR2;
+    
+    FUNCTION create_user(
+        p_username            IN VARCHAR2,
+        p_password         IN VARCHAR2
+    ) RETURN NUMBER;
 
     PROCEDURE create_user(
         p_username            IN VARCHAR2,

@@ -5,7 +5,7 @@
     name: Navigation Menu
 
   subscription: 
-    version-number: 42100450410993
+    version-number: 42100515630695
 
   source: 
     type: Static Values
@@ -64,13 +64,68 @@
     security: 
       authorization-scheme: Administrator Rights # 7815560117623667
 
+  - # ====== Entry: Users ========================================
+    id: 9724698173878134
+    label: 
+      label: Users
+
+    icon: 
+      image/icon-css-classes: fa-users
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 100
+      - 101
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:100:&APP_SESSION.::&DEBUG.:::'
+        page: 100 # Users
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Your Projects ================================
+    id: 9898916582516695
+    label: 
+      label: Your Projects
+
+    icon: 
+      image/icon-css-classes: fa-folder-o
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 200
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:200:&APP_SESSION.::&DEBUG.:::'
+        page: 200 # Your Projects
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
 - # ====== List: Navigation Bar ================================
   id: 7810391671623617
   identification: 
     name: Navigation Bar
 
   subscription: 
-    version-number: 42100313092569
+    version-number: 42100510668425
 
   source: 
     type: Static Values
@@ -315,6 +370,59 @@
 
     server-side-condition: 
       type: User is Authenticated (not public)
+
+  - # ====== Entry: Change Name ==================================
+    id: 9807221388136650
+    label: 
+      label: Change Name
+
+    icon: 
+      image/icon-css-classes: fa-user
+
+    layout: 
+      sequence: 71
+      parent-entry: '&APP_USER.' # 7999191522624633
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:2:::'
+        page: 2 # Profile
+        clear-cache: 2
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Change Password ==============================
+    id: 9807764140142119
+    label: 
+      label: Change Password
+
+    icon: 
+      image/icon-css-classes: fa-key
+
+    layout: 
+      sequence: 72
+      parent-entry: '&APP_USER.' # 7999191522624633
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:3:&SESSION.::&DEBUG.::::'
+        page: 3 # Change Password
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
 
 - # ====== List: Application Configuration =====================
   id: 8001725118624643

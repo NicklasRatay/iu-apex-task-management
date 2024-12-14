@@ -30,6 +30,10 @@ prompt --install
 @@application/shared_components/user_interface/lovs/email_username_format.sql
 @@application/shared_components/user_interface/lovs/feedback_rating.sql
 @@application/shared_components/user_interface/lovs/feedback_status.sql
+@@application/shared_components/user_interface/lovs/lov_roles.sql
+@@application/shared_components/user_interface/lovs/lov_task_priority.sql
+@@application/shared_components/user_interface/lovs/lov_task_status.sql
+@@application/shared_components/user_interface/lovs/lov_user.sql
 @@application/shared_components/user_interface/lovs/timeframe_4_weeks.sql
 @@application/shared_components/user_interface/lovs/user_theme_preference.sql
 @@application/shared_components/user_interface/lovs/view_as_report_chart.sql
@@ -126,6 +130,13 @@ prompt --install
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00000.sql
 @@application/pages/page_00001.sql
+@@application/pages/page_00002.sql
+@@application/pages/page_00003.sql
+@@application/pages/page_00100.sql
+@@application/pages/page_00101.sql
+@@application/pages/page_00200.sql
+@@application/pages/page_00201.sql
+@@application/pages/page_00202.sql
 @@application/pages/page_09999.sql
 @@application/pages/page_10000.sql
 @@application/pages/page_10010.sql

@@ -51,9 +51,9 @@ wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(7517611913622738)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_plugin=>'NATIVE_SINGLE_CHECKBOX'
-,p_attribute_01=>'Y'
-,p_attribute_02=>'N'
-,p_version_scn=>42100313070890
+,p_attribute_01=>'1'
+,p_attribute_02=>'0'
+,p_version_scn=>42100502092757
 );
 wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(7517955540622739)
@@ -65,10 +65,10 @@ wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(7518219137622740)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_plugin=>'NATIVE_YES_NO'
-,p_attribute_01=>'Y'
-,p_attribute_03=>'N'
+,p_attribute_01=>'1'
+,p_attribute_03=>'0'
 ,p_attribute_05=>'SWITCH_CB'
-,p_version_scn=>42100313070892
+,p_version_scn=>42100502099346
 );
 wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(7518578220622741)

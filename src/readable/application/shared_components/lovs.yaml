@@ -221,3 +221,153 @@
       display: Closed
       return: 4
 
+- # ====== List of Values: LOV_ROLES ===========================
+  id: 9762460613347600
+  identification: 
+    name: LOV_ROLES
+
+  subscription: 
+    version-number: 42100504532228
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TBL_ROLE
+
+  column-mapping: 
+    return: ID
+    display: NAME
+    default-sort: NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: LOV_TASK_PRIORITY ===================
+  id: 9932979136550540
+  identification: 
+    name: LOV_TASK_PRIORITY
+
+  subscription: 
+    version-number: 42100514233232
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TBL_TASK_PRIORITY
+
+  column-mapping: 
+    return: ID
+    display: NAME
+    default-sort: ID
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: LOV_TASK_STATUS =====================
+  id: 9933190713551879
+  identification: 
+    name: LOV_TASK_STATUS
+
+  subscription: 
+    version-number: 42100514236620
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TBL_TASK_STATUS
+
+  column-mapping: 
+    return: ID
+    display: NAME
+    default-sort: ID
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: LOV_USER ============================
+  id: 9933334481554786
+  identification: 
+    name: LOV_USER
+
+  subscription: 
+    version-number: 42100514261864
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: VW_USER_FULL_NAME
+
+  column-mapping: 
+    return: ID
+    display: FULL_NAME
+    default-sort: LAST_NAME
+    sort-direction: Ascending (Nulls Last)
+
+  columns: 
+  - # ====== Column: FIRST_NAME ==================================
+    id: 9934443924579907
+    identification: 
+      column-name: FIRST_NAME
+      show: true
+
+    heading: 
+      heading: First Name
+
+    layout: 
+      sequence: 20
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: LAST_NAME ===================================
+    id: 9934853143579908
+    identification: 
+      column-name: LAST_NAME
+      show: true
+
+    heading: 
+      heading: Last Name
+
+    layout: 
+      sequence: 30
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: ID ==========================================
+    id: 9935211900579908
+    identification: 
+      column-name: ID
+      show: false
+
+    layout: 
+      sequence: 10
+
+    source: 
+      data-type: NUMBER
+
+    advanced: 
+      searchable: false
+
+  - # ====== Column: FULL_NAME ===================================
+    id: 9935653500579909
+    identification: 
+      column-name: FULL_NAME
+      show: false
+
+    heading: 
+      heading: Full Name
+
+    layout: 
+      sequence: 40
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: false
+

@@ -16,6 +16,9 @@
   <include file="table/tbl_task_status_table.xml"/> 
   <include file="table/tbl_user_table.xml"/> 
   <include file="table/tbl_user_role_table.xml"/> 
+  <include file="view/vw_project_with_task_summary_view.xml"/> 
+  <include file="view/vw_user_full_name_view.xml"/> 
+  <include file="view/vw_user_with_roles_view.xml"/> 
   <include file="ref_constraint/fk_assigned_user_ref_constraint.xml"/> 
   <include file="ref_constraint/fk_project_ref_constraint.xml"/> 
   <include file="ref_constraint/fk_role_ref_constraint.xml"/> 
