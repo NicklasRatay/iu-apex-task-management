@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="Nicklas Ratay (generated)" id="1734186705460-1">
+    <changeSet author="Nicklas Ratay (generated)" id="1734101104572-1">
         <insert tableName="TBL_ROLE">
             <column name="ID" valueNumeric="2"/>
             <column name="NAME" value="Project Manager"/>
@@ -26,7 +26,7 @@
             <column name="UPDATED_BY"/>
         </insert>
     </changeSet>
-    <changeSet author="Nicklas Ratay (generated)" id="1734186705460-2">
+    <changeSet author="Nicklas Ratay (generated)" id="1734101104572-2">
         <insert tableName="TBL_TASK_PRIORITY">
             <column name="ID" valueNumeric="1"/>
             <column name="NAME" value="Low"/>
@@ -60,7 +60,7 @@
             <column name="UPDATED_BY"/>
         </insert>
     </changeSet>
-    <changeSet author="Nicklas Ratay (generated)" id="1734186705460-3">
+    <changeSet author="Nicklas Ratay (generated)" id="1734101104572-3">
         <insert tableName="TBL_TASK_STATUS">
             <column name="ID" valueNumeric="1"/>
             <column name="NAME" value="To Do"/>
