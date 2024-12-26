@@ -20,36 +20,101 @@ navigation:
   warn-on-unsaved-changes: true
 
 javascript: 
-  execute-when-page-loads: |
-    // Enable drag-and-drop
-    document.addEventListener('DOMContentLoaded', function () {
-        const cards = document.querySelectorAll('.kanban-card');
-        const lanes = document.querySelectorAll('.t-CardRegion-group'); // Kanban lanes
+  function-and-global-variable-declaration: |
+    function drop_over_handle(event) {
+        event.preventDefault();
+    }
     
-        // Allow drag start
-        cards.forEach(card => {
-            card.addEventListener('dragstart', (event) => {
-                event.dataTransfer.setData('task-id', card.dataset.taskId);
-                console.log(card.dataset.taskId)
-            });
-        });
+    function drag_handle(event) {
+        event.dataTransfer.setData("text", event.target.getAttribute("data-task-id"));
+    }
     
-        // Allow drop on Kanban lanes
-        lanes.forEach(lane => {
-            lane.addEventListener('dragover', (event) => {
-                event.preventDefault();
-            });
+    function drop_handle(droppedOnElement, event) {
+        event.preventDefault(event);
+        const taskId = event.dataTransfer.getData("text");
     
-            lane.addEventListener('drop', (event) => {
-                event.preventDefault();
-                const taskId = event.dataTransfer.getData('task-id');
-                const newStatus = lane.dataset.status;
+        event.target.closest(".kanban-bucket").appendChild($(`[data-task-id=${taskId}]`)[0]);
+        $x("P300_DRAGGED_TASK_ID").value = taskId;
+        $x("P300_DROPPED_ON_TASK_STATUS_ID").value = droppedOnElement.getAttribute("data-status-id");
     
-                
-                console.log(taskId, newStatus)
-            });
-        });
-    });
+        apex.server.process(
+            "CHANGE_TASK_STATUS",
+            { pageItems: "#P300_DRAGGED_TASK_ID, #P300_DROPPED_ON_TASK_STATUS_ID" }
+        );
+    }
+
+css: 
+  inline: |
+    /* Container for the entire Kanban board */
+    .kanban-container {
+        display: flex;
+        gap: 0; /* No gap to ensure seamless dividers */
+    }
+    
+    /* Each bucket in the Kanban board */
+    .kanban-bucket {
+        flex: 1;
+        border-right: 1px solid #ccc; /* Divider between buckets */
+        padding: 0px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* Remove left border for the first bucket */
+    .kanban-bucket:first-child {
+        border-left: none;
+    }
+    
+    /* Remove right border for the last bucket */
+    .kanban-bucket:last-child {
+        border-right: none;
+    }
+    
+    /* Title of each bucket */
+    .kanban-bucket-title {
+        text-align: center;
+        font-size: 21px;
+        margin-bottom: 10px;
+    }
+    
+    /* Each card representing a task */
+    .kanban-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease; /* Smooth transition */
+    }
+    
+    /* Title of each task card */
+    .kanban-card-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    /* Description of the task */
+    .kanban-card-description {
+        margin: 5px 0;
+        font-size: 12px;
+        color: #555;
+    }
+    
+    /* Meta information (Deadline and Priority) */
+    .kanban-card-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #555;
+    }
+    
+    /* Hover effect for Kanban cards */
+    .kanban-card:hover {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        cursor: pointer;
+    }
     
 
 security: 
@@ -70,30 +135,79 @@ server-cache:
   caching: Disabled
 
 regions: 
-- # ====== Region: Your Tasks ==================================
-  id: 9826131293248007
+- # ====== Region: Kanban Board ================================
+  id: 9829472744248040
   identification: 
-    name: Your Tasks
-    type: Interactive Grid
+    name: Kanban Board
+    type: Dynamic Content
 
   source: 
-    location: Local Database
-    type: Table / View
-    table-owner: Parsing Schema
-    table-name: TBL_TASK
-    include-rowid-column: false
-    where-clause: |
-      assigned_user_id = (
-          SELECT
-              id
-          FROM
-              tbl_user
-          WHERE
-              LOWER(email) = LOWER(:APP_USER)
-      )
+    language: PL/SQL
+    pl/sql-function-body-returning-a-clob: |
+      DECLARE
+          -- Cursor for task statuses
+          CURSOR cur_status IS
+              SELECT id, name
+                FROM tbl_task_status
+               ORDER BY id;
+      
+          -- Determine the assigned user ID once, outside the loop
+          l_user_id tbl_user.id%TYPE;
+      
+          -- Cursor for tasks based on status_id
+          CURSOR cur_task(p_status_id NUMBER) IS
+              SELECT id, name, 
+                     description, 
+                     TO_CHAR(deadline, 'YYYY-MM-DD') AS deadline, 
+                     CASE task_priority_id
+                         WHEN 1 THEN '<span class="fa fa-angle-down u-color-30-text fa-lg" aria-hidden="true"></span>'
+                         WHEN 2 THEN '<span aria-hidden="true" class="fa fa-minus u-color-31-text fa-lg"></span>'
+                         WHEN 3 THEN '<span aria-hidden="true" class="fa fa-angle-up u-color-37-text fa-lg"></span>'
+                         WHEN 4 THEN '<span aria-hidden="true" class="fa fa-angle-double-up u-color-39-text fa-lg"></span>'
+                         ELSE '<span aria-hidden="true" class="fa fa-question-circle fa-lg"></span>'
+                     END AS priority_icon
+                FROM tbl_task
+               WHERE task_status_id = p_status_id
+                 AND assigned_user_id = l_user_id
+                 AND task_status_id <> 3
+               ORDER BY name;
+      
+          l_result CLOB := '<div class="kanban-container">'; -- Container for Kanban board
+      BEGIN
+          -- Fetch the user ID based on the current application user
+          SELECT id
+            INTO l_user_id
+            FROM tbl_user
+           WHERE LOWER(email) = LOWER(:APP_USER);
+      
+          -- Loop through statuses
+          FOR l_status IN cur_status LOOP
+              l_result := l_result || '<div class="kanban-bucket" data-status-id="' || l_status.id || '" ondrop="drop_handle(this,event)" ondragover="drop_over_handle(event)">';
+              l_result := l_result || '<h3 class="kanban-bucket-title">' || apex_escape.html(l_status.name) || '</h3>';
+      
+              -- Loop through tasks for the current status
+              FOR l_task IN cur_task(l_status.id) LOOP
+                  l_result := l_result || '<div class="kanban-card" draggable="true" data-task-id="' || l_task.id || '" ondragstart="drag_handle(event)">';
+                  l_result := l_result || '<h4 class="kanban-card-title">' || apex_escape.html(l_task.name) || '</h4>';
+                  l_result := l_result || '<p class="kanban-card-description">' || apex_escape.html(l_task.description) || '</p>';
+                  l_result := l_result || '<div class="kanban-card-meta">';
+                  l_result := l_result || l_task.priority_icon;
+                  l_result := l_result || l_task.deadline;
+                  l_result := l_result || '</div>'; -- Close meta
+                  l_result := l_result || '</div>'; -- Close task card
+              END LOOP;
+      
+              l_result := l_result || '</div>'; -- Close bucket
+          END LOOP;
+      
+          l_result := l_result || '</div>'; -- Close the flex container
+      
+          RETURN l_result;
+      END;
+      
 
   layout: 
-    sequence: 20
+    sequence: 70
     parent-region: No Parent
     slot: BODY
     start-new-layout: false
@@ -103,7 +217,7 @@ regions:
     column-span: Automatic
 
   appearance: 
-    template: Interactive Report
+    template: Blank with Attributes (No Grid)
     template-options: 
     - '#DEFAULT#'
     render-components: Above Content
@@ -116,749 +230,104 @@ regions:
     region-display-selector: false
     exclude-title-from-translation: false
 
+  server-cache: 
+    caching: Disabled
+
   customization: 
     customizable: Not Customizable By End Users
 
   attributes: 
-    id: 9826273636248008
-    edit: 
-      enabled: true
-      allowed-operations: 
-      - Update Row
-      lost-update-type: Row Values
-
     performance: 
       lazy-loading: false
 
-    appearance: 
-      select-first-row: false
-      fixed-row-height: false
-
-    pagination: 
-      type: Scroll
-      show-total-count: true
-
-    toolbar: 
-      show: true
-      controls: 
-      - Search Column Selection
-      - Search Field
-      - Actions Menu
-      - Reset Button
-      - Save Button
-
-    enable-users-to: 
-      save-public-report: false
-      flashback: true
-      define-chart-view: true
-      download: true
-
-    download: 
-      formats: 
-      - CSV
-      - HTML
-      - Excel
-      - PDF
-      send-as-email: true
-
-    heading: 
-      fixed-to: Page
-
-    icon-view: 
-      show: false
-
-    detail-view: 
-      show: false
-
-    saved-reports: 
-    - # ====== Saved Report: Primary Report ========================
-      id: 10125211347251858
-      identification: 
-        name: Primary Report
-        alias: 101253
-
-  columns: 
-  - # ====== Column: ID ==========================================
-    id: 9826397212248009
-    identification: 
-      column-name: ID
-      type: Hidden
-
-    settings: 
-      value-protected: true
-
-    layout: 
-      sequence: 30
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: ID
-      data-type: NUMBER
-      query-only: true
-      primary-key: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    export-/-printing: 
-      include-in-export-/-print: false
-
-    enable-users-to: 
-      sort: false
-
-  - # ====== Column: PROJECT_ID ==================================
-    id: 9826462130248010
-    identification: 
-      column-name: PROJECT_ID
-      type: Display Only
-
-    heading: 
-      heading: Project
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Display Value of List of Values
-
-    layout: 
-      sequence: 80
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    list-of-values: 
-      type: Shared Component
-      list-of-values: LOV_PROJECT # 10141560415262067
-      display-extra-values: true
-
-    source: 
-      type: Database Column
-      database-column: PROJECT_ID
-      data-type: NUMBER
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: Use List of Values
-      exact-match: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: TASK_STATUS_ID ==============================
-    id: 9826572295248011
-    identification: 
-      column-name: TASK_STATUS_ID
-      type: Select List
-
-    heading: 
-      heading: Status
-      alignment: start
-
-    layout: 
-      sequence: 130
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    validation: 
-      value-required: true
-
-    list-of-values: 
-      type: Shared Component
-      list-of-values: LOV_TASK_STATUS # 9933190713551879
-      display-extra-values: true
-      display-null-value: true
-
-    source: 
-      type: Database Column
-      database-column: TASK_STATUS_ID
-      data-type: NUMBER
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: Use List of Values
-      exact-match: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: TASK_PRIORITY_ID ============================
-    id: 9826640594248012
-    identification: 
-      column-name: TASK_PRIORITY_ID
-      type: Display Only
-
-    heading: 
-      heading: Priority
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Display Value of List of Values
-
-    layout: 
-      sequence: 120
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    list-of-values: 
-      type: Shared Component
-      list-of-values: LOV_TASK_PRIORITY # 9932979136550540
-      display-extra-values: true
-
-    source: 
-      type: Database Column
-      database-column: TASK_PRIORITY_ID
-      data-type: NUMBER
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: Use List of Values
-      exact-match: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: ASSIGNED_USER_ID ============================
-    id: 9826793425248013
-    identification: 
-      column-name: ASSIGNED_USER_ID
-      type: Hidden
-
-    settings: 
-      value-protected: true
-
-    layout: 
-      sequence: 40
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: ASSIGNED_USER_ID
-      data-type: NUMBER
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    export-/-printing: 
-      include-in-export-/-print: false
-
-    enable-users-to: 
-      sort: false
-
-  - # ====== Column: NAME ========================================
-    id: 9826839312248014
-    identification: 
-      column-name: NAME
-      type: Display Only
-
-    heading: 
-      heading: Name
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 90
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: NAME
-      data-type: VARCHAR2
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: Distinct Column
-      exact-match: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: DESCRIPTION =================================
-    id: 9826956853248015
-    identification: 
-      column-name: DESCRIPTION
-      type: Display Only
-
-    heading: 
-      heading: Description
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 100
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: DESCRIPTION
-      data-type: VARCHAR2
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: None
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: false
-      hide: true
-
-  - # ====== Column: DEADLINE ====================================
-    id: 9827092735248016
-    identification: 
-      column-name: DEADLINE
-      type: Display Only
-
-    heading: 
-      heading: Deadline
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 110
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: DEADLINE
-      data-type: DATE
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      lov-type: Distinct Column
-      date-ranges: All
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: CREATED_AT ==================================
-    id: 9827126903248017
-    identification: 
-      column-name: CREATED_AT
-      type: Display Only
-
-    heading: 
-      heading: Created At
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 140
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: CREATED_AT
-      data-type: TIMESTAMP
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      lov-type: Distinct Column
-      date-ranges: All
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: CREATED_BY ==================================
-    id: 9827293024248018
-    identification: 
-      column-name: CREATED_BY
-      type: Display Only
-
-    heading: 
-      heading: Created By
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 150
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: CREATED_BY
-      data-type: VARCHAR2
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: Distinct Column
-      exact-match: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: UPDATED_AT ==================================
-    id: 9827384121248019
-    identification: 
-      column-name: UPDATED_AT
-      type: Display Only
-
-    heading: 
-      heading: Updated At
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 160
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: UPDATED_AT
-      data-type: TIMESTAMP
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      lov-type: Distinct Column
-      date-ranges: All
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: UPDATED_BY ==================================
-    id: 9827428357248020
-    identification: 
-      column-name: UPDATED_BY
-      type: Display Only
-
-    heading: 
-      heading: Updated By
-      alignment: start
-
-    settings: 
-      format: Plain Text
-      based-on: Item Value
-
-    layout: 
-      sequence: 170
-      column-alignment: start
-      stretch: Use Report Setting
-
-    accessibility: 
-      value-identifies-row: false
-
-    source: 
-      type: Database Column
-      database-column: UPDATED_BY
-      data-type: VARCHAR2
-      query-only: false
-      primary-key: false
-
-    default: 
-      duplicate-copies-existing-value: true
-
-    session-state: 
-      data-type: VARCHAR2
-
-    column-filter: 
-      enabled: true
-      performance-impacting-operators: 
-      - Contains
-      - Starts With
-      - Case Insensitive
-      - Regular Expression
-      text-case: Mixed
-      lov-type: Distinct Column
-      exact-match: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    enable-users-to: 
-      sort: true
-      control-break/aggregate: true
-      hide: true
-
-  - # ====== Column: APEX$ROW_ACTION =============================
-    id: 9827656783248022
-    identification: 
-      column-name: APEX$ROW_ACTION
-      type: Actions Menu
-
-    layout: 
-      sequence: 20
-
-  - # ====== Column: APEX$ROW_SELECTOR ===========================
-    id: 9827786195248023
-    identification: 
-      column-name: APEX$ROW_SELECTOR
-      type: Row Selector
-
-    settings: 
-      enable-multi-select: true
-      show-select-all: true
-      hide-control: false
-
-    layout: 
-      sequence: 10
-
-  printing: 
-    page: 
-      size: Letter
-      orientation: Landscape
-      units: Inches
-      width: 11
-      height: 8.5
-      border-width: 0.5
-      border-color: '#666666'
-
-    page-header: 
-      font: Helvetica
-      font-weight: Normal
-      font-size: 12
-      font-color: '#000000'
-      alignment: center
-
-    column-headings: 
-      font: Helvetica
-      font-weight: Bold
-      font-size: 10
-      font-color: '#000000'
-      background-color: '#EEEEEE'
-
-    columns: 
-      font: Helvetica
-      font-weight: Normal
-      font-size: 10
-      font-color: '#000000'
-      background-color: '#FFFFFF'
-
-    page-footer: 
-      font: Helvetica
-      font-weight: Normal
-      font-size: 12
-      font-color: '#000000'
-      alignment: center
-
-processes: 
-- # ====== Process: Your Tasks - Save Interactive Grid Data ====
-  id: 9827816687248024
+page-items: 
+- # ====== Page Item: P300_DROPPED_ON_TASK_STATUS_ID ===========
+  id: 9829595798248041
   identification: 
-    name: Your Tasks - Save Interactive Grid Data
-    type: Interactive Grid - Automatic Row Processing (DML)
-    execution-chain: None
-    editable-region: Your Tasks # 9826131293248007
+    name: P300_DROPPED_ON_TASK_STATUS_ID
+    type: Hidden
 
   settings: 
-    target-type: Region Source
-    prevent-lost-updates: true
-    lock-row: Yes
-    return-primary-key(s)-after-insert: true
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P300_DRAGGED_TASK_ID =====================
+  id: 9829671863248042
+  identification: 
+    name: P300_DRAGGED_TASK_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+processes: 
+- # ====== Process: CHANGE_TASK_STATUS =========================
+  id: 9829756111248043
+  identification: 
+    name: CHANGE_TASK_STATUS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          UPDATE tbl_task
+          SET
+              task_status_id = :P300_DROPPED_ON_TASK_STATUS_ID
+          WHERE
+              id = :P300_DRAGGED_TASK_ID;
+              
+          -- Eliminate "Error: SyntaxError: Unexpected end of JSON input"
+          apex_json.open_object;
+          apex_json.write('success', true);
+          apex_json.close_object;
+      END;
 
   execution: 
     sequence: 10
-    point: Processing
+    point: Ajax Callback
     run-process: Once Per Page Visit (default)
-
-  error: 
-    display-location: Inline in Notification
-
-  server-side-condition: 
-    execution-scope: For Created and Modified Rows
 
