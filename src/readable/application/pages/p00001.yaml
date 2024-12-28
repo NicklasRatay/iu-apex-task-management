@@ -54,10 +54,10 @@ server-cache:
   caching: Disabled
 
 regions: 
-- # ====== Region: Tick-It =====================================
+- # ====== Region: Project and Task Counts =====================
   id: 7825167575623722
   identification: 
-    name: Tick-It
+    name: Project and Task Counts
     type: Cards
 
   source: 
